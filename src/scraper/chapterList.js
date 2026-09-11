@@ -19,11 +19,32 @@ function cleanChapterTitle(rawText) {
 // (ex.: ".../chapter-2-diagon-alley-shopping_123" -> "Chapter 2 Diagon Alley Shopping").
 // Usado quando o texto do link vier vazio, curto demais ou visivelmente quebrado.
 function titleFromUrl(chapterUrl) {
-  const slug = chapterUrl.split('/').pop() ?? '';
+  const rawSlug = chapterUrl.split('/').pop() ?? '';
+  // O slug pode vir percent-encoded (ex.: "%C3%A7o" para "ço" em sites com
+  // acentos na URL, como webnovel.com) — decodifica antes de virar título,
+  // senão os códigos aparecem literalmente no lugar da letra acentuada.
+  const slug = decodeURIComponentSafe(rawSlug);
   const withoutId = slug.replace(/_\d+$/, '');
-  const words = withoutId.replace(/[-_]/g, ' ').trim();
+  const words = withoutId
+    .replace(/[-_]+/g, ' ')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
   if (!words) return null;
-  return words.replace(/\b\w/g, (c) => c.toUpperCase());
+  // Capitaliza a primeira letra de cada palavra. Usa "início da string ou
+  // espaço" em vez de \b (word boundary), pois \b não reconhece letras
+  // acentuadas (ç, ã, é...) como parte da palavra e capitaliza também a
+  // letra seguinte a elas (ex.: "começo" viraria "ComeçO").
+  return words.replace(/(^|\s)\S/g, (c) => c.toUpperCase());
+}
+
+function decodeURIComponentSafe(str) {
+  try {
+    return decodeURIComponent(str);
+  } catch {
+    // "%" seguido de algo que não é um par hexadecimal válido — mantém o
+    // texto original em vez de derrubar a descoberta inteira de capítulos.
+    return str;
+  }
 }
 
 function isSuspiciousTitle(title) {

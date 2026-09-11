@@ -5,11 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="referrer" content="no-referrer" />
 <title>Minhas Novels</title>
+<link rel="icon" type="image/png" href="favicon.png" />
 <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <header>
-    <h1><span data-icon="library"></span> Minhas Novels</h1>
+    <h1><img src="header-icon.png" alt="" class="header-icon" /> Minhas Novels</h1>
   </header>
 
   <main>
@@ -131,6 +132,24 @@
       <div id="translate-content" translate="yes" lang="en"></div>
     </section>
   </main>
+
+  <div id="electron-translate-modal" class="modal-overlay" hidden>
+    <div class="modal-box">
+      <h3><span data-icon="languages"></span> Tradução no navegador</h3>
+      <p>
+        A tradução usa o recurso nativo do navegador (Chrome/Edge), que não existe dentro do app desktop.
+        Abra o link abaixo no seu navegador para traduzir e salvar os capítulos:
+      </p>
+      <div class="modal-link-row">
+        <input type="text" id="electron-translate-link" readonly />
+        <button type="button" id="btn-copy-translate-link" class="secondary">Copiar</button>
+      </div>
+      <p id="electron-translate-copy-status" class="status-line"></p>
+      <div class="form-actions">
+        <button type="button" id="btn-close-translate-modal" class="secondary">Fechar</button>
+      </div>
+    </div>
+  </div>
 
   <script type="module" src="js/main.js"></script>
 </body>

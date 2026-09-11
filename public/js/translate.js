@@ -4,6 +4,32 @@ import { showOnly, translateSection } from './sections.js';
 import { state } from './state.js';
 import { openNovel } from './novelDetail.js';
 import { createFontSizeControl } from './readerPrefs.js';
+import { isElectron } from './runtime.js';
+
+const electronModal = document.getElementById('electron-translate-modal');
+const electronModalLink = document.getElementById('electron-translate-link');
+const electronModalCopyStatus = document.getElementById('electron-translate-copy-status');
+
+function showElectronTranslateModal(novelId) {
+  const url = `${window.location.origin}/#translate/${novelId}`;
+  electronModalLink.value = url;
+  electronModalCopyStatus.textContent = '';
+  electronModal.hidden = false;
+}
+
+document.getElementById('btn-close-translate-modal').addEventListener('click', () => {
+  electronModal.hidden = true;
+});
+
+document.getElementById('btn-copy-translate-link').addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(electronModalLink.value);
+    electronModalCopyStatus.textContent = 'Link copiado.';
+  } catch {
+    electronModalLink.select();
+    electronModalCopyStatus.textContent = 'Não foi possível copiar automaticamente — selecione e copie manualmente.';
+  }
+});
 
 const translateTitle = document.getElementById('translate-title');
 const translateStatus = document.getElementById('translate-status');
@@ -55,7 +81,9 @@ function renderChapters() {
     .join('');
 }
 
-export async function openTranslate() {
+export async function openTranslate(novelId) {
+  if (novelId) state.currentNovelId = novelId;
+
   translateTitle.textContent = 'Carregando...';
   translateStatus.textContent = '';
   translateContent.innerHTML = '';
@@ -81,7 +109,13 @@ export async function openTranslate() {
   renderChapters();
 }
 
-btnOpenTranslate.addEventListener('click', openTranslate);
+btnOpenTranslate.addEventListener('click', () => {
+  if (isElectron()) {
+    showElectronTranslateModal(state.currentNovelId);
+    return;
+  }
+  openTranslate();
+});
 document.getElementById('btn-close-translate').addEventListener('click', () => openNovel(state.currentNovelId));
 filterSelect.addEventListener('change', renderChapters);
 

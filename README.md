@@ -11,6 +11,28 @@ npm start
 
 Acesse http://localhost:3000
 
+## App desktop (Electron)
+
+O mesmo sistema também roda como app desktop — abre uma janela própria e sobe
+o servidor internamente, sem precisar de terminal nem navegador.
+
+```bash
+npm run electron:dev      # abre o app em modo desenvolvimento
+npm run electron:build    # gera o instalador (AppImage/nsis/dmg) em dist-electron/
+```
+
+Em modo desenvolvimento, usa o mesmo `data/db.json` do modo web. No app
+empacotado (`electron:build`), os dados ficam no diretório de dados do usuário
+do sistema operacional (ex.: `~/.config/Minhas Novels/data/` no Linux), já que
+o diretório de instalação costuma ser somente-leitura.
+
+Em ambientes sem sandbox de Chromium configurado (containers, WSL, algumas
+distros Linux), pode ser necessário rodar com `--no-sandbox`:
+
+```bash
+npx electron --no-sandbox electron/main.js
+```
+
 ## Como funciona
 
 - **Salvar novel**: link + título + descrição, guardados em `data/db.json`.
@@ -21,7 +43,9 @@ Acesse http://localhost:3000
 ## Estrutura
 
 ```
-server.js                    # ponto de entrada: sobe o Express e trata shutdown
+server.js                    # ponto de entrada (modo web): sobe o Express e trata shutdown
+electron/
+  main.js                    # ponto de entrada do app desktop: sobe o Express internamente + janela
 src/
   app.js                     # monta o Express (middlewares + rotas)
   db.js                      # persistência simples em data/db.json

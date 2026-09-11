@@ -1,10 +1,16 @@
-import { readFile, writeFile, rename } from 'node:fs/promises';
+import { readFile, writeFile, rename, mkdir } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { randomUUID } from 'node:crypto';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const DB_FILE = path.join(__dirname, '..', 'data', 'db.json');
+// Em modo desktop (Electron empacotado), o diretório do app costuma ser
+// somente-leitura — o processo principal do Electron define DB_DIR para um
+// diretório de dados do usuário (app.getPath('userData')) antes de importar
+// este módulo. Sem isso definido (uso normal via `node server.js`), cai no
+// data/ local do projeto, como sempre foi.
+const DB_DIR = process.env.DB_DIR || path.join(__dirname, '..', 'data');
+const DB_FILE = path.join(DB_DIR, 'db.json');
 const TMP_FILE = `${DB_FILE}.tmp`;
 
 async function readDb() {
@@ -27,6 +33,7 @@ function writeDb(data) {
   writeQueue = writeQueue
     .catch(() => {})
     .then(async () => {
+      await mkdir(DB_DIR, { recursive: true });
       const json = JSON.stringify(data, null, 2);
       await writeFile(TMP_FILE, json, 'utf-8');
       await rename(TMP_FILE, DB_FILE);
