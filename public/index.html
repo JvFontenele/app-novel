@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="referrer" content="no-referrer" />
+<title>Minhas Novels</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1><span data-icon="library"></span> Minhas Novels</h1>
+  </header>
+
+  <main>
+    <section id="novels-section">
+      <div class="section-header">
+        <h2>Minhas novels</h2>
+        <button type="button" id="btn-toggle-add-novel" class="primary"><span data-icon="plus"></span> Nova novel</button>
+      </div>
+
+      <form id="novel-form" class="add-novel-form" hidden>
+        <input type="url" id="novel-url" placeholder="Link da novel" required />
+        <input type="text" id="novel-title" placeholder="Título" required />
+        <input type="url" id="novel-cover" placeholder="URL da imagem de capa (opcional)" />
+        <textarea id="novel-description" placeholder="Descrição (opcional)"></textarea>
+        <div class="form-actions">
+          <button type="button" id="btn-preview" class="secondary"><span data-icon="search"></span> Buscar título e capa automaticamente</button>
+          <button type="submit">Salvar novel</button>
+          <button type="button" id="btn-cancel-add-novel" class="secondary">Cancelar</button>
+        </div>
+      </form>
+
+      <div id="novels-list"></div>
+    </section>
+
+    <section id="novel-detail-section" hidden>
+      <button id="btn-back"><span data-icon="arrow-left"></span> Voltar</button>
+
+      <div class="novel-header">
+        <img id="detail-cover" class="detail-cover" hidden alt="" referrerpolicy="no-referrer" />
+        <div class="novel-header-info">
+          <h2 id="detail-title"></h2>
+          <p id="detail-description"></p>
+          <p id="detail-stats" class="detail-stats"></p>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <button type="button" id="btn-fetch-all-content" class="primary"><span data-icon="download"></span> Buscar todos os conteúdos</button>
+        <button type="button" id="btn-read-all" class="secondary"><span data-icon="book-open"></span> Ler tudo</button>
+        <button type="button" id="btn-open-translate" class="secondary"><span data-icon="languages"></span> Traduzir capítulos</button>
+        <button type="button" id="btn-discover-chapters" class="secondary"><span data-icon="search"></span> Buscar capítulos (catálogo)</button>
+      </div>
+
+      <div id="discover-status" class="status-line"></div>
+
+      <div class="toolbar export-toolbar">
+        <select id="export-language" class="language-select">
+          <option value="original">Original</option>
+          <option value="translated">Tradução salva</option>
+        </select>
+        <button type="button" id="btn-export-epub" class="secondary"><span data-icon="book-open"></span> Baixar EPUB</button>
+        <button type="button" id="btn-export-pdf" class="secondary"><span data-icon="download"></span> Baixar PDF</button>
+      </div>
+      <div id="export-status" class="status-line"></div>
+
+      <div id="bulk-fetch-progress" class="progress-box" hidden>
+        <div class="progress-bar"><div id="bulk-fetch-bar" class="progress-bar-fill"></div></div>
+        <div id="bulk-fetch-status" class="status-line"></div>
+      </div>
+
+      <details class="add-chapter-details">
+        <summary>Adicionar capítulo manualmente</summary>
+        <form id="chapter-form">
+          <input type="url" id="chapter-url" placeholder="Link do capítulo" required />
+          <input type="text" id="chapter-title" placeholder="Título do capítulo (opcional)" />
+          <button type="submit">Adicionar capítulo</button>
+        </form>
+      </details>
+
+      <h3>Capítulos</h3>
+      <ul id="chapters-list"></ul>
+    </section>
+
+    <section id="read-all-section" hidden>
+      <button id="btn-close-read-all"><span data-icon="arrow-left"></span> Voltar</button>
+      <h2 id="read-all-title"></h2>
+      <div class="reader-actions">
+        <select id="read-all-language" class="language-select">
+          <option value="original">Original</option>
+          <option value="translated">Tradução salva</option>
+        </select>
+        <span id="read-all-font-size-slot"></span>
+      </div>
+      <div id="read-all-status"></div>
+      <div id="read-all-content"></div>
+    </section>
+
+    <section id="reader-section" hidden>
+      <button id="btn-close-reader"><span data-icon="arrow-left"></span> Fechar leitura</button>
+      <h2 id="reader-title"></h2>
+      <div class="reader-actions">
+        <button id="btn-fetch-content"><span data-icon="download"></span> Buscar/atualizar conteúdo</button>
+        <select id="reader-language" class="language-select" hidden>
+          <option value="original">Original</option>
+          <option value="translated">Tradução salva</option>
+        </select>
+        <span id="reader-font-size-slot"></span>
+      </div>
+      <div id="reader-status"></div>
+      <article id="reader-content"></article>
+    </section>
+
+    <section id="translate-section" hidden>
+      <button id="btn-close-translate"><span data-icon="arrow-left"></span> Voltar</button>
+      <h2 id="translate-title"></h2>
+      <div class="reader-actions">
+        <button type="button" id="btn-translate-all"><span data-icon="languages"></span> Traduzir</button>
+        <select id="translate-filter" class="language-select">
+          <option value="pending">Só sem tradução</option>
+          <option value="all">Todos os capítulos</option>
+        </select>
+        <span id="translate-font-size-slot"></span>
+        <span class="translate-hint">
+          Ative a tradução do navegador (ícone na barra de endereço ou botão direito → "Traduzir para português") e clique em
+          <strong>"Traduzir"</strong>: o sistema vai passar por cada capítulo listado, esperar a tradução aplicar e salvar automaticamente.
+        </span>
+      </div>
+      <div id="translate-status"></div>
+      <div id="translate-content" translate="yes" lang="en"></div>
+    </section>
+  </main>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
