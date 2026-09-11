@@ -89,6 +89,12 @@ export async function buildEpub(novel, chapters, { useTranslation } = {}) {
         content,
         appendChapterTitles: true,
         verbose: false,
+        // Por padrão a lib usa um diretório relativo a ela mesma
+        // (node_modules/@lesjoursfr/html-to-epub/tempDir), o que quebra no
+        // app empacotado — esse caminho fica dentro do .asar, montado
+        // somente-leitura. Aponta explicitamente para o nosso próprio
+        // diretório temporário (sempre gravável, em qualquer ambiente).
+        tempDir: tmpDir,
       },
       outputPath,
     );
